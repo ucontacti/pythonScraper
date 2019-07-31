@@ -9,19 +9,17 @@ uClient.close()
 
 page_soup = soup(page_html, "html.parser")
 
-containers = page_soup.find_all("div", {"class":"item-container"})
+containers = page_soup.find("div","list-wrap").find_all("div", {"class":"item-container"})
 
 for container in containers:
-    # divWithInfo = container.find("div","item-brand")
-    
-
-    title_container = container.find_all("a", {"class": "item-title"})
-
-    product_name = title_container[0].text
+    product_name = container.find_all("a", {"class": "item-title"})[0].text
+    brand = container.find("div","item-info").find("div","item-branding").find('img')["title"]
+    price = container.find("div","item-info").find("div","item-action").find('ul').find("li","price-current").find("strong").string
 
     # shipping_container = container.find_all("li", {"class":"price-ship"})
     # shipping = shipping_container[0].text.strip()
 
     # print("shipping: " + shipping)
     print("product_name: " + product_name)
-    
+    print("brand: " + brand)
+    print("price: " + price)
