@@ -8,13 +8,19 @@ page_html = uClient.read()
 uClient.close()
 
 page_soup = soup(page_html, "html.parser")
-
 containers = page_soup.find("div","list-wrap").find_all("div", {"class":"item-container"})
+
+f = open("products.csv", "w")
+headers = "product_name,brand,was,price,link\n"
+f.write(headers)
 
 for container in containers:
     product_name = container.find_all("a", {"class": "item-title"})[0].text
     brand = container.find("div","item-info").find("div","item-branding").find('img')["title"]
     price = container.find("div","item-info").find("div","item-action").find('ul').find("li","price-current").find("strong").string
+    was = container.find("div","item-info").find("div","item-action").find('ul').find("li","price-was")
+    was = was.find("span", "price-was-data").text.strip() if was.text.strip() else ''
+    link = container.find('a', href=True)['href']
 
     # shipping_container = container.find_all("li", {"class":"price-ship"})
     # shipping = shipping_container[0].text.strip()
@@ -22,4 +28,9 @@ for container in containers:
     # print("shipping: " + shipping)
     print("product_name: " + product_name)
     print("brand: " + brand)
+    print("was: " + was)
     print("price: " + price)
+    print("link: " + link)
+    f.write(product_name.replace("," , "|") + "," + brand + "," + was + "," + price + "," + link +  "\n")
+
+f.close()
